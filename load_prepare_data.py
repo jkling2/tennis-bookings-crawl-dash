@@ -37,6 +37,10 @@ def load_prepare_JSON():
     return df
 
 
+def load_prepare_csv():
+    return pd.read_csv(booking_data_csv_path)
+
+
 def aggregate_data(df):
     df_bookable_courts = df.loc[df['playMode'].str.lower() != 'gesperrt']
     # aggregate reservations per day time
@@ -94,4 +98,4 @@ def calc_times(from_time, to_time):
 
 if __name__ == '__main__':
     load_prepare_JSON()
-    aggregate_data(pd.read_csv(booking_data_csv_path))
+    aggregate_data(load_prepare_csv())
