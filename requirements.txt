@@ -1,4 +1,4 @@
 numpy
 pandas
-dash==1.9.1
+dash
 matplotlib
