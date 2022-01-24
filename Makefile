@@ -1,7 +1,7 @@
 html:
 	# Build the app
 	export DEBUG=False && python3 dash_app_clientside_callback.py &
-	sleep 60
+	sleep 15
 	wget -r http://127.0.0.1:8050/
 	wget -r http://127.0.0.1:8050/_dash-layout
 	wget -r http://127.0.0.1:8050/_dash-dependencies
