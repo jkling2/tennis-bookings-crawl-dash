@@ -11,6 +11,7 @@ html:
 	sed -i 's/_dash-dependencies/_dash-dependencies.json/g' 127.0.0.1:8050/_dash-component-suites/dash/dash-renderer/build/*.js
 	mv 127.0.0.1:8050/_dash-layout 127.0.0.1:8050/_dash-layout.json
 	mv 127.0.0.1:8050/_dash-dependencies 127.0.0.1:8050/_dash-dependencies.json
+	cp _static/async* 127.0.0.1:8050/_dash-component-suites/dash/dcc/
 	ps | grep python | awk '{print $$1}' | xargs kill -9
 
 update:
