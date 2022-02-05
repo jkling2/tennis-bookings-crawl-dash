@@ -6,27 +6,30 @@ import matplotlib.pyplot as plt
 booking_data_json_path = "data/bookingData.json"
 booking_data_csv_path = "data/bookingData.csv"
 
+
 def load_prepare_JSON():
     # read raw data
     df = pd.read_json(booking_data_json_path, 'records').explode('reservations')
     print(df.shape)
     # get relevant data (reservations), flatten JSON and get relevant columns
-    df = pd.json_normalize(df['reservations'].dropna())[['court', 'date', 'fromTime', 'toTime', 'text', 'shortText', 'info', 'additionalPlayers']]
+    df = pd.json_normalize(df['reservations'].dropna())[
+        ['court', 'date', 'fromTime', 'toTime', 'text', 'shortText', 'info', 'additionalPlayers']]
     # drop data after first week of November
     df = df.loc[pd.to_datetime(df['date'], format='%d.%m.%Y').dt.date < datetime(2021, 10, 9).date()]
     print(df.shape)
     # add weekday column
     df['weekday'] = pd.to_datetime(df['date'], format='%d.%m.%Y').dt.day_name()
     # correct court number
-    df['court'] = df['court']-1210
+    df['court'] = df['court'] - 1210
     # split info to determine players and play mode
     df['playerCount'] = df['additionalPlayers'].str.len() + 1
-    df['guestPlayerCount'] = df['additionalPlayers'].apply(lambda l : np.count_nonzero(["Gast" in dic['text'] for dic in l]))
+    df['guestPlayerCount'] = df['additionalPlayers'].apply(
+        lambda l: np.count_nonzero(["Gast" in dic['text'] for dic in l]))
     df['playMode'] = df['info'].str.split(' • ').str[-1]
     df.loc[df['text'].str.lower() == 'gesperrt', 'playMode'] = 'gesperrt'
     # calculate start times (a session starts every 15 minutes) and explode one starttime per line
-    df['startTime'] = df.apply(lambda row : calc_times(pd.to_datetime(row.fromTime, format='%H:%M'),
-                                                       pd.to_datetime(row.toTime, format='%H:%M')), axis=1)
+    df['startTime'] = df.apply(lambda row: calc_times(pd.to_datetime(row.fromTime, format='%H:%M'),
+                                                      pd.to_datetime(row.toTime, format='%H:%M')), axis=1)
     df = df.explode('startTime')
     # drop not needed columns
     df.drop(columns=['fromTime', 'toTime', 'text', 'shortText', 'info', 'additionalPlayers'], inplace=True)
@@ -51,9 +54,11 @@ def aggregate_data(df):
 
     # aggregate reservations per day and day time
     agg_start_time_per_week_day_sum = df_bookable_courts.groupby(['weekday', 'startTime']).size().reset_index(name='n')
-    color_map = {'Monday': 'red', 'Tuesday': 'blue', 'Wednesday': 'green', 'Thursday': 'orange', 'Friday': 'brown', 'Saturday': 'gray', 'Sunday': 'yellow'}
+    color_map = {'Monday': 'red', 'Tuesday': 'blue', 'Wednesday': 'green', 'Thursday': 'orange', 'Friday': 'brown',
+                 'Saturday': 'gray', 'Sunday': 'yellow'}
     colors = agg_start_time_per_week_day_sum['weekday'].apply(lambda x: color_map[x])
-    agg_start_time_per_week_day_sum['x'] = agg_start_time_per_week_day_sum['weekday'] + " - " + agg_start_time_per_week_day_sum['startTime']
+    agg_start_time_per_week_day_sum['x'] = agg_start_time_per_week_day_sum['weekday'] + " - " + \
+                                           agg_start_time_per_week_day_sum['startTime']
     agg_start_time_per_week_day_sum.plot.bar(x='x', y='n', color=colors)
     print(agg_start_time_per_week_day_sum.shape)
     print(agg_start_time_per_week_day_sum)
