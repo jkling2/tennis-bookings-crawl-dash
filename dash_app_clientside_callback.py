@@ -2,6 +2,7 @@ import datetime
 import dash
 from dash import dcc
 from dash import html
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output, State
 import pandas as pd
@@ -37,10 +38,12 @@ def make_fig(data):
         fig = go.Figure()
         for playMode, grouped_by_mode in grouped_by_day.groupby("playMode"):
             fig.add_trace(
-                go.Bar(x=grouped_by_mode["startTime"], y=grouped_by_mode["avgBooking"], name=playMode, marker={'color': colors[playMode]}))
-        fig.update_layout(legend_title_text="Buchungsart", barmode='stack', legend={'traceorder':'normal'})
+                go.Bar(x=grouped_by_mode["startTime"], y=grouped_by_mode["avgBooking"], name=playMode,
+                       marker={'color': colors[playMode]}))
+        fig.update_layout(legend_title_text="Buchungsart", barmode='stack', legend={'traceorder': 'normal'})
         fig.update_xaxes(title_text="Uhrzeit", fixedrange=True)
-        fig.update_yaxes(title_text="Durchschnittliche # Buchungen", range=[0, amount_courts], tick0=0, dtick=1, fixedrange=True)
+        fig.update_yaxes(title_text="Durchschnittliche # Buchungen", range=[0, amount_courts], tick0=0, dtick=1,
+                         fixedrange=True)
         figs[weekday] = fig
     return figs
 
@@ -72,37 +75,46 @@ colors = {'gesperrt': 'black',
           'Doppel Flutlicht': 'gold',
           'Medenspiel': 'red'}
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(children=[
-    html.H1(children='Platzbuchungen für TC BW Vaihingen-Rohr'),
-    html.H2(id='h2'),
-    html.Div([
-        dcc.Dropdown(id='day-picker',
-                     options=days_dic,
-                     value=day,
-                     clearable=False,
-                     style=dict(
-                         width='80%'
-                     )),
-        dcc.Dropdown(id='time-picker',
-                     options=times,
-                     value=round_down_to_full_quarter_minutes(day_time),
-                     clearable=False,
-                     style=dict(
-                         width='80%'
-                     )),
-    ], style=dict(display='flex', width='20%', )),
-    dcc.Graph(
-        id='avg-reservations-day-day-time',
-        style=dict(
-            width='40%',
-            verticalAlign="middle"
-        )
+    dbc.Row(
+        [
+            dbc.Col(lg=3, xs=1),
+            dbc.Col(html.H1(children='Platzbuchungen für TC BW Vaihingen-Rohr')),
+            dbc.Col(lg=4, xs=1),
+        ]
+    ),
+    dbc.Row(
+        [
+            dbc.Col(lg=3, xs=1),
+            dbc.Col(html.H2(id='h2')),
+            dbc.Col(lg=4, xs=1),
+        ]
+    ),
+    dbc.Row(
+        [
+            dbc.Col(lg=3, xs=2),
+            dbc.Col(dcc.Dropdown(id='day-picker',
+                                 options=days_dic,
+                                 value=day,
+                                 clearable=False)),
+            dbc.Col(dcc.Dropdown(id='time-picker',
+                                 options=times,
+                                 value=round_down_to_full_quarter_minutes(day_time),
+                                 clearable=False)),
+            dbc.Col(lg=5, xs=2),
+        ]
+    ),
+    dbc.Row(
+        [
+            dbc.Col(lg=3, xs=2),
+            dbc.Col(dcc.Graph(id='avg-reservations-day-day-time')),
+            dbc.Col(lg=5, xs=2),
+        ]
     ),
     dcc.Store(id='store', data=make_fig(agg_data)),
     dcc.Store(id='days_d_to_en_dic', data=days_d_to_en_dic),
 ])
-
 
 app.clientside_callback(
     """
@@ -144,7 +156,7 @@ app.clientside_callback(
             data.push(mode_for_day_time);
         }
         data_for_day_time['data'] = data;
-        return [data_for_day_time, `Durchschnittliche Reservierungen für ${reference_day} gegen ${reference_day_time} Uhr`];
+        return [data_for_day_time, `Ø Reservierungen für ${reference_day} gegen ${reference_day_time} Uhr`];
     }
     """,
     Output('avg-reservations-day-day-time', 'figure'),
@@ -154,7 +166,6 @@ app.clientside_callback(
     State('store', 'data'),
     State('days_d_to_en_dic', 'data')
 )
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
