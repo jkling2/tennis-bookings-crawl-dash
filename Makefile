@@ -14,9 +14,8 @@ html:
 	sed -i 's/\/_favicon.ico[0-9]*\.*[0-9]*/favicon.ico/g' 127.0.0.1:8050/index.html
 	mv 127.0.0.1:8050/_dash-layout 127.0.0.1:8050/_dash-layout.json
 	mv 127.0.0.1:8050/_dash-dependencies 127.0.0.1:8050/_dash-dependencies.json
-	mv 127.0.0.1:8050/_favicon.ico?v=2.1.0 127.0.0.1:8050/favicon.ico
+	mv 127.0.0.1:8050/_favicon.ico?m=[0-9]*\.[0-9]* 127.0.0.1:8050/favicon.ico
 	cp _static/async* 127.0.0.1:8050/_dash-component-suites/dash/dcc/
-	cp assets/* 127.0.0.1:8050/
 	ps | grep python | awk '{print $$1}' | xargs kill -9
 
 update:
