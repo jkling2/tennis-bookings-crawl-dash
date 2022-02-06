@@ -10,10 +10,12 @@ html:
 	sed -i 's/_dash-dependencies/_dash-dependencies.json/g' 127.0.0.1:8050/_dash-component-suites/dash/deps/*.js
 	sed -i 's/_dash-dependencies/_dash-dependencies.json/g' 127.0.0.1:8050/_dash-component-suites/dash/dash-renderer/build/*.js
 	sed -i 's/_dash-component-suites/tennis-bookings-crawl-dash-page\/_dash-component-suites/g' 127.0.0.1:8050/index.html
-	sed -i 's/"url_base_pathname":null,"requests_pathname_prefix":"\/","ui":true,"props_check":true,"show_undo_redo":false,"suppress_callback_exceptions":false,"update_title":"Updating...","hot_reload":{"interval":3000,"max_retry":8}/"url_base_pathname":"\/tennis-bookings-crawl-dash-page\/","requests_pathname_prefix":"\/tennis-bookings-crawl-dash-page\/","ui":false,"props_check":false,"show_undo_redo":false/g' 127.0.0.1:8050/index.html
+	sed -i 's/"requests_pathname_prefix":"\/","ui":true,"props_check":true,"show_undo_redo":false,"suppress_callback_exceptions":false,"update_title":"Updating...","hot_reload":{"interval":3000,"max_retry":8}/"requests_pathname_prefix":"\/tennis-bookings-crawl-dash-page\/","ui":false,"props_check":false,"show_undo_redo":false/g' 127.0.0.1:8050/index.html
+	sed -i 's/\/_favicon.ico?m=[0-9]*\.[0-9]*/favicon.ico/g' 127.0.0.1:8050/index.html
 	mv 127.0.0.1:8050/_dash-layout 127.0.0.1:8050/_dash-layout.json
 	mv 127.0.0.1:8050/_dash-dependencies 127.0.0.1:8050/_dash-dependencies.json
 	cp _static/async* 127.0.0.1:8050/_dash-component-suites/dash/dcc/
+	cp assets/* 127.0.0.1:8050/
 	ps | grep python | awk '{print $$1}' | xargs kill -9
 
 update:
