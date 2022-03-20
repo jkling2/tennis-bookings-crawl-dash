@@ -96,11 +96,9 @@ app.layout = html.Div(children=[
             dbc.Col(xxl=3, xs=2),
             dbc.Col(dcc.Dropdown(id='day-picker',
                                  options=days_dic,
-                                 value=day,
                                  clearable=False)),
             dbc.Col(dcc.Dropdown(id='time-picker',
                                  options=times,
-                                 value=round_down_to_full_quarter_minutes(day_time),
                                  clearable=False)),
             dbc.Col(xxl=3, xs=2),
         ]
