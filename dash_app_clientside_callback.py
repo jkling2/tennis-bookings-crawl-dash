@@ -124,7 +124,7 @@ app.clientside_callback(
         dt.setHours(reference_day_time.split(':')[0]);
         dt.setMinutes(reference_day_time.split(':')[1] - 30);
         for (let s = 0; s <= 6; s++) {
-            start_times.push(dt.getHours() + ":" + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()));
+            start_times.push((dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ":" + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()));
             dt.setMinutes(dt.getMinutes() + 15);
         }
         let day_data = store_data[days_d_to_en_dic[reference_day]];
