@@ -4,7 +4,7 @@ from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ClientsideFunction
 import pandas as pd
 import load_prepare_data
 
@@ -77,18 +77,24 @@ colors = {'gesperrt': 'black',
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(children=[
+    dcc.Interval(
+        id="load_interval",
+        n_intervals=0,
+        max_intervals=0,  # <-- only run once
+        interval=1
+    ),
     dbc.Row(
         [
-            dbc.Col(xxl=3, xs=1),
+            dbc.Col(xxl=3, xs=2),
             dbc.Col(html.H1(children='Platzbuchungen für TC BW Vaihingen-Rohr')),
-            dbc.Col(xxl=3, xs=1),
+            dbc.Col(xs=2),
         ]
     ),
     dbc.Row(
         [
-            dbc.Col(xxl=3, xs=1),
+            dbc.Col(xxl=3, xs=2),
             dbc.Col(html.H2(id='h2')),
-            dbc.Col(xxl=3, xs=1),
+            dbc.Col(xs=2),
         ]
     ),
     dbc.Row(
@@ -100,13 +106,14 @@ app.layout = html.Div(children=[
             dbc.Col(dcc.Dropdown(id='time-picker',
                                  options=times,
                                  clearable=False)),
-            dbc.Col(xxl=3, xs=2),
+            dbc.Col(lg=5, md=4, sm=3, xs=2),
         ]
     ),
     dbc.Row(
         [
             dbc.Col(xxl=3, xs=2),
-            dbc.Col(dcc.Graph(id='avg-reservations-day-day-time')),
+            dbc.Col(dcc.Graph(id='avg-reservations-day-day-time',
+                              style={"width": "90%"})),
             dbc.Col(xxl=3, xs=2),
         ]
     ),
@@ -114,56 +121,31 @@ app.layout = html.Div(children=[
     dcc.Store(id='days_d_to_en_dic', data=days_d_to_en_dic),
 ])
 
+
 app.clientside_callback(
-    """
-    function(reference_day_time, reference_day, store_data, days_d_to_en_dic) {
-        var start_times = [];
-        var dt = new Date();
-        dt.setHours(reference_day_time.split(':')[0]);
-        dt.setMinutes(reference_day_time.split(':')[1] - 30);
-        for (let s = 0; s <= 6; s++) {
-            start_times.push((dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ":" + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()));
-            dt.setMinutes(dt.getMinutes() + 15);
-        }
-        let day_data = store_data[days_d_to_en_dic[reference_day]];
-        let data_for_day_time = {};
-        data_for_day_time['layout'] = day_data['layout'];
-        let data = [];
-        for (let m = 0; m < day_data['data'].length; m++) {
-            let mode = day_data['data'][m];
-            let mode_for_day_time = {};
-            mode_for_day_time['marker'] = mode['marker']
-            mode_for_day_time['name'] = mode['name']
-            mode_for_day_time['type'] = mode['type']
-            let data_y = [].fill(0.0);
-            for (let i = 0; i < mode['x'].length; i++) {
-                let idx = start_times.indexOf(mode['x'][i]);
-                if (idx >= 0) {
-                    data_y[idx] = mode['y'][i];
-                }
-            }
-            mode_for_day_time['x'] = [];
-            for (let s = 0; s < start_times.length; s++) {
-                if (s == 2) {
-                    mode_for_day_time['x'].push("<b>" + start_times[s] + "</b>");
-                } else {
-                    mode_for_day_time['x'].push(start_times[s]);
-                }
-            }
-            mode_for_day_time['y'] = data_y;
-            data.push(mode_for_day_time);
-        }
-        data_for_day_time['data'] = data;
-        return [data_for_day_time, `Ø Reservierungen für ${reference_day} gegen ${reference_day_time} Uhr`];
-    }
-    """,
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='update_store_data_initial'
+    ),
+    Output('day-picker', 'value'),
+    Output('time-picker', 'value'),
+    Input(component_id="load_interval", component_property="n_intervals")
+)
+
+
+app.clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='update_store_data'
+    ),
     Output('avg-reservations-day-day-time', 'figure'),
     Output('h2', 'children'),
-    Input('time-picker', 'value'),
     Input('day-picker', 'value'),
+    Input('time-picker', 'value'),
     State('store', 'data'),
     State('days_d_to_en_dic', 'data')
 )
+
 
 if __name__ == '__main__':
     app.run_server(debug=False)
