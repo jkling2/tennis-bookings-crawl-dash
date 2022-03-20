@@ -16,7 +16,8 @@ html:
 	sed -i 's/\/assets/\/tennis-bookings-crawl-dash-page\/assets/g' 127.0.0.1:8050/index.html
 	mv 127.0.0.1:8050/_dash-layout 127.0.0.1:8050/_dash-layout.json
 	mv 127.0.0.1:8050/_dash-dependencies 127.0.0.1:8050/_dash-dependencies.json
-	mv 127.0.0.1:8050/assets/favicon.* 127.0.0.1:8050/assets/favicon.ico
+	mv 127.0.0.1:8050/assets/favicon.ico* 127.0.0.1:8050/assets/favicon.ico
+	mv 127.0.0.1:8050/assets/callback.js* 127.0.0.1:8050/assets/callback.js
 	cp _static/async* 127.0.0.1:8050/_dash-component-suites/dash/dcc/
 	ps | grep python | awk '{print $$1}' | xargs kill -9
 
