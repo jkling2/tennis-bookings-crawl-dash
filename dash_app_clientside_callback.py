@@ -42,7 +42,7 @@ def make_fig(data):
                        marker={'color': colors[playMode]}))
         fig.update_layout(legend_title_text="Buchungsart", barmode='stack', legend={'traceorder': 'normal'})
         fig.update_xaxes(title_text="Uhrzeit", fixedrange=True)
-        fig.update_yaxes(title_text="Durchschnittliche # Buchungen", range=[0, amount_courts], tick0=0, dtick=1,
+        fig.update_yaxes(title_text="Ø Reservierungen", range=[0, amount_courts], tick0=0, dtick=1,
                          fixedrange=True)
         figs[weekday] = fig
     return figs
@@ -79,37 +79,35 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(children=[
     dbc.Row(
         [
-            dbc.Col(lg=3, xs=1),
+            dbc.Col(xxl=3, xs=1),
             dbc.Col(html.H1(children='Platzbuchungen für TC BW Vaihingen-Rohr')),
-            dbc.Col(lg=4, xs=1),
+            dbc.Col(xxl=3, xs=1),
         ]
     ),
     dbc.Row(
         [
-            dbc.Col(lg=3, xs=1),
+            dbc.Col(xxl=3, xs=1),
             dbc.Col(html.H2(id='h2')),
-            dbc.Col(lg=4, xs=1),
+            dbc.Col(xxl=3, xs=1),
         ]
     ),
     dbc.Row(
         [
-            dbc.Col(lg=3, xs=2),
+            dbc.Col(xxl=3, xs=2),
             dbc.Col(dcc.Dropdown(id='day-picker',
                                  options=days_dic,
-                                 value=day,
                                  clearable=False)),
             dbc.Col(dcc.Dropdown(id='time-picker',
                                  options=times,
-                                 value=round_down_to_full_quarter_minutes(day_time),
                                  clearable=False)),
-            dbc.Col(lg=5, xs=2),
+            dbc.Col(xxl=3, xs=2),
         ]
     ),
     dbc.Row(
         [
-            dbc.Col(lg=3, xs=2),
+            dbc.Col(xxl=3, xs=2),
             dbc.Col(dcc.Graph(id='avg-reservations-day-day-time')),
-            dbc.Col(lg=5, xs=2),
+            dbc.Col(xxl=3, xs=2),
         ]
     ),
     dcc.Store(id='store', data=make_fig(agg_data)),
@@ -168,4 +166,4 @@ app.clientside_callback(
 )
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
