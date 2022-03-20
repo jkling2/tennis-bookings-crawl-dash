@@ -10,7 +10,7 @@ html:
 	sed -i 's/_dash-dependencies/_dash-dependencies.json/g' 127.0.0.1:8050/_dash-component-suites/dash/deps/*.js
 	sed -i 's/_dash-dependencies/_dash-dependencies.json/g' 127.0.0.1:8050/_dash-component-suites/dash/dash-renderer/build/*.js
 	sed -i 's/_dash-component-suites/tennis-bookings-crawl-dash-page\/_dash-component-suites/g' 127.0.0.1:8050/index.html
-	sed -i 's/"requests_pathname_prefix":"\/","ui":true,"props_check":true,"show_undo_redo":false,"suppress_callback_exceptions":false,"update_title":"Updating...","hot_reload":{"interval":3000,"max_retry":8}/"requests_pathname_prefix":"\/tennis-bookings-crawl-dash-page\/","ui":false,"props_check":false,"show_undo_redo":false/g' 127.0.0.1:8050/index.html
+	sed -i 's/"requests_pathname_prefix":"\/"/"requests_pathname_prefix":"\/tennis-bookings-crawl-dash-page\/"/g' 127.0.0.1:8050/index.html
 	sed -i 's/<title>Dash<\/title>/<title>Avg. Bookings TC BW<\/title>/g' 127.0.0.1:8050/index.html
 	sed -i 's/\?m=[0-9]*\.[0-9]*//g' 127.0.0.1:8050/index.html
 	sed -i 's/\/assets/\/tennis-bookings-crawl-dash-page\/assets/g' 127.0.0.1:8050/index.html
