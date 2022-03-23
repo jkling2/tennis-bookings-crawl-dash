@@ -7,7 +7,7 @@ window.dash_clientside.clientside = {
         var today = new Date();
         var reference_day = today.toLocaleString('de-DE', {weekday:'long'});
         var minutes = parseInt(today.getMinutes() / 15) * 15;
-        var reference_day_time = today.getHours() + ":" + ((minutes < 10 ? "0" : "") + minutes);
+        var reference_day_time = ((today.getHours() < 10 ? "0" : "") + today.getHours()) + ":" + ((minutes < 10 ? "0" : "") + minutes);
         return [reference_day, reference_day_time];
     },
     update_store_data: function(reference_day, reference_day_time, store_data, days_d_to_en_dic) {
