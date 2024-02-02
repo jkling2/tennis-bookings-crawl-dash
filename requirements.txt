@@ -1,6 +1,6 @@
 numpy
 pandas
-dash==2.1.0
+dash==2.15.0
 dash_bootstrap_components
 matplotlib
 plotly
